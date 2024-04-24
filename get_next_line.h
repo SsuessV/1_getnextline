@@ -17,14 +17,21 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+# include <fcntl.h>
 
-#ifndef BUFFER_SIZE
-# define BUFFER_SIZE 1024
-#endif
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1024
+# endif
 
-char	*get_next_line(int fd);
-char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
-int	ft_strlen(const char *str);
+char    *get_next_line(int fd);
+char    *ft_strjoin(char const *s1, char const *s2);
+char    *ft_substr(char const *s, unsigned int start, size_t len);
+int ft_strlen(const char *str);
+char    *ft_strchr(const char *s, int c);
+void    *ft_read_line(int fd, char *accum);
+char    *ft_cut_out(char *buffer);
+char    *ft_append(char *storage, char *accum);
+void    *ft_calloc(size_t nmemb, size_t size);
+char	*free_line(char *buffer);
 
 #endif

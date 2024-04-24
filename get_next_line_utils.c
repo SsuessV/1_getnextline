@@ -77,3 +77,40 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (substr);
 }
 
+char	*ft_strchr(const char *s, int c)
+{
+	int	i;
+
+	i = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] == (char)c)
+		{
+			return ((char *)&s[i]);
+		}
+		i++;
+	}
+	if ((char)c == '\0')
+	{
+		return ((char *)&s[i]);
+	}
+	return (NULL);
+}
+
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	void	*mem;
+	size_t	i;
+
+	i = 0;
+	mem = malloc(nmemb * size);
+	if (mem == NULL)
+		return (NULL);
+	char *ptr = (char *)mem;
+	while (i < nmemb *size)
+	{
+		ptr[i] = 0;
+		i++;
+	}
+	return (mem);
+}

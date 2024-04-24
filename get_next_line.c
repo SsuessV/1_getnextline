@@ -12,9 +12,9 @@
 
 #include "get_next_line.h"
 
-static char *ft_append (char *storage, char *accum)
+char	*ft_append(char *storage, char *accum)
 {
-	char *joined;
+	char	*joined;
 
 	joined = ft_strjoin(accum, storage);
 	free(storage);
@@ -23,69 +23,90 @@ static char *ft_append (char *storage, char *accum)
 
 void	*ft_read_line(int fd, char *accum)
 {
-	char *storage;
-	ssize_t bytes_read;
+	char	*storage;
+	ssize_t	bytes_read;
 
+	if (!accum)
+		accum = ft_calloc(1, 1);
 	storage = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!storage)
 		return (NULL);
 	bytes_read = 1;
-	while (bytes_read > 0)
+	while (bytes_read > 0 && !(ft_strchr(storage, '\n')))
 	{
 		bytes_read = read(fd, storage, BUFFER_SIZE);
-		if (!(ft_strchr(storage, '\n')))
-			return (ft_append(storage, accum));
-	}
-	if (bytes_read <= 0)
-	{
-		free(storage);
-		return(NULL);
-	}
-	storage[bytes_read] = '\0';
-	return (ft_append(storage, accum));
-}
-char	*ft_extract_line(void *storage)
-{
-	char *line;
-	int i;
-
-	i = 0;
-	line = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!line)
-		return (NULL);
-	while (storage[i] != '\n' && storage[i] == EOF)
-	{
-		i++;
-		if (storage[i] == '\n')
+		storage[bytes_read] = '\0';
+		accum = ft_append (storage, accum);
+		if (bytes_read == -1)
 		{
-			line = ft_substr(storage, 0, i);
-			return (line);
+			free(storage);
+			free(accum);
 		}
 	}
-}
-	malloc ((i + 1) * sizeof(char));
-	return (line);
+	free(storage);
+	return (accum);
 }
 
-char *get_next_line(int fd)
+char	*ft_cut_out(char *buffer)
 {
-	char buf[BUFFER_SIZE + 1];
-	ssize_t bytes_read;
+	char	*store_the_line;
+	char	*cursor;
+	int		i;
+
+	i = 0;
+	store_the_line = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!store_the_line)
+		return (NULL);
+	while (buffer[i] != '\n' && buffer[i] != '\0')
+	{
+		store_the_line[i] = buffer[i];
+		i++;
+	}
+	store_the_line[i] = '\0';
+	if (ft_strchr(buffer, '\n'))
+	{
+		cursor = ft_strchr(buffer, '\n');
+		store_the_line = ft_substr(buffer, 0, cursor - buffer);
+	}
+	return (store_the_line);
+}
+
+char	*free_line(char *buffer)
+{
+	int	i;
+	int	j;
+	char	*str;
+
+	i = 0;
+	j = 0;
+	while (buffer[i] && buffer[i] != '\n')
+		i++;
+	if (!buffer[i])
+	{
+		free (buffer);
+		return (NULL);
+	}
+	str = ft_calloc((ft_strlen(buffer) - i + 1), sizeof(char));
+	if (!str)
+		return (NULL);
+	while (buffer[++i])
+		str[j++] = buffer[i];
+	str[j] = '\0';
+	free (buffer);
+	return (str);
+}
+
+char	*get_next_line(int fd)
+{
+	char *line[1024];
+	char	buf[BUFFER_SIZE + 1];
+	ssize_t	bytes_read;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	
 	bytes_read = read(fd, buf, BUFFER_SIZE);
 	if (bytes_read == 0)
 		return (NULL);
-	/*while (!ft_strchr(buf, '\n') && buf != '\0')
-	{
-		
-	}*/
-	while (cursor != \n || bytes_read > 0)
-	{
-		ft_read_line(fd);
-	}
-	return (line);
-
-static line[1024];
+	line[fd] = ft_cut_out(ft_read_line(fd, line[fd]));
+	return (line[fd]);
+}
