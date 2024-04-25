@@ -33,7 +33,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	len_new = ft_strlen(s1) + ft_strlen(s2);
 	new_str = (char *)malloc(sizeof(char) * (len_new + 1));
-	if (new_str == NULL)
+	if (!new_str)
 		return (NULL);
 	i = 0;
 	while (s1[i] != '\0')
@@ -50,31 +50,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	}
 	new_str[i] = '\0';
 	return (new_str);
-}
-
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	size_t			i;
-	char			*substr;
-
-	if (s == NULL)
-		return (NULL);
-	if (start >= (unsigned int)ft_strlen(s) || len == 0)
-		return (ft_calloc(1, 1));
-	if (len > ft_strlen(s) - start)
-		len = ft_strlen(s) - start;
-	i = 0;
-	substr = (char *)malloc((len + 1) * sizeof(char));
-	if (substr == NULL)
-		return (NULL);
-	while (s[i] != '\0' && i < len)
-	{
-		substr[i] = s[start];
-		i++;
-		start++;
-	}
-	substr[i] = '\0';
-	return (substr);
 }
 
 char	*ft_strchr(const char *s, int c)
@@ -101,13 +76,14 @@ void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*mem;
 	size_t	i;
+	char	*ptr;
 
 	i = 0;
 	mem = malloc(nmemb * size);
 	if (mem == NULL)
 		return (NULL);
-	char *ptr = (char *)mem;
-	while (i < nmemb *size)
+	ptr = (char *)mem;
+	while (i < nmemb * size)
 	{
 		ptr[i] = 0;
 		i++;

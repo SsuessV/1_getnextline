@@ -16,97 +16,109 @@ char	*ft_append(char *storage, char *accum)
 {
 	char	*joined;
 
-	joined = ft_strjoin(accum, storage);
+	joined = ft_strjoin(storage, accum);
 	free(storage);
 	return (joined);
 }
 
-void	*ft_read_line(int fd, char *accum)
+char	*ft_read_line(int fd, char *storage)
 {
-	char	*storage;
-	ssize_t	bytes_read;
+	char	*accum;
+	int		bytes_read;
 
-	if (!accum)
-		accum = ft_calloc(1, 1);
-	storage = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!storage)
+		storage = ft_calloc(1, 1);
+	accum = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!accum)
 		return (NULL);
 	bytes_read = 1;
 	while (bytes_read > 0 && !(ft_strchr(storage, '\n')))
 	{
-		bytes_read = read(fd, storage, BUFFER_SIZE);
-		storage[bytes_read] = '\0';
-		accum = ft_append (storage, accum);
+		bytes_read = read(fd, accum, BUFFER_SIZE);
 		if (bytes_read == -1)
-		{
-			free(storage);
-			free(accum);
-		}
+			return (free(storage), free(accum), NULL);
+		accum[bytes_read] = '\0';
+		storage = ft_append (storage, accum);
+		if (!storage)
+			return (NULL);
 	}
-	free(storage);
-	return (accum);
+	free (accum);
+	return (storage);
 }
 
-char	*ft_cut_out(char *buffer)
+char	*ft_cut_out(char *accum)
 {
 	char	*store_the_line;
-	char	*cursor;
 	int		i;
 
 	i = 0;
-	store_the_line = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!accum[i])
+		return (NULL);
+	while (accum[i] != '\0' && accum[i] != '\n')
+		i++;
+	store_the_line = ft_calloc(i + 2, sizeof(char));
 	if (!store_the_line)
 		return (NULL);
-	while (buffer[i] != '\n' && buffer[i] != '\0')
+	i = 0;
+	while (accum[i] != '\n' && accum[i] != '\0')
 	{
-		store_the_line[i] = buffer[i];
+		store_the_line[i] = accum[i];
 		i++;
 	}
-	store_the_line[i] = '\0';
-	if (ft_strchr(buffer, '\n'))
-	{
-		cursor = ft_strchr(buffer, '\n');
-		store_the_line = ft_substr(buffer, 0, cursor - buffer);
-	}
+	if (accum[i] == '\n' && accum[i] != '\0')
+		store_the_line[i++] = '\n';
 	return (store_the_line);
 }
 
-char	*free_line(char *buffer)
+char	*free_line(char *accum)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	char	*str;
 
 	i = 0;
 	j = 0;
-	while (buffer[i] && buffer[i] != '\n')
+	while (accum[i] && accum[i] != '\n')
 		i++;
-	if (!buffer[i])
+	if (!accum[i])
 	{
-		free (buffer);
+		free (accum);
 		return (NULL);
 	}
-	str = ft_calloc((ft_strlen(buffer) - i + 1), sizeof(char));
+	str = ft_calloc((ft_strlen(accum) - i + 1), sizeof(char));
 	if (!str)
 		return (NULL);
-	while (buffer[++i])
-		str[j++] = buffer[i];
+	while (accum[++i])
+		str[j++] = accum[i];
 	str[j] = '\0';
-	free (buffer);
+	free (accum);
 	return (str);
 }
 
 char	*get_next_line(int fd)
 {
-	char *line[1024];
-	char	buf[BUFFER_SIZE + 1];
-	ssize_t	bytes_read;
+	char		*store_the_line;
+	static char	*accum;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	bytes_read = read(fd, buf, BUFFER_SIZE);
-	if (bytes_read == 0)
+	accum = ft_read_line(fd, accum);
+	if (!accum)
 		return (NULL);
-	line[fd] = ft_cut_out(ft_read_line(fd, line[fd]));
-	return (line[fd]);
+	store_the_line = ft_cut_out(accum);
+	accum = free_line(accum);
+	return (store_the_line);
 }
+// #include <stdio.h>
+// int main(void)
+// {
+// 	int fd = open("test.txt", O_RDONLY);
+// 	char *line;
+// 	while((line = get_next_line(fd)))
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// 	return(0);
+// }
