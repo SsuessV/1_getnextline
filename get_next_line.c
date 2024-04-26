@@ -29,8 +29,7 @@ char	*ft_read_line(int fd, char *storage)
 	if (!storage)
 		storage = ft_calloc(1, 1);
 	accum = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!accum)
-		return (NULL);
+	ft_check_null(accum);
 	bytes_read = 1;
 	while (bytes_read > 0 && !(ft_strchr(storage, '\n')))
 	{
@@ -39,8 +38,7 @@ char	*ft_read_line(int fd, char *storage)
 			return (free(storage), free(accum), NULL);
 		accum[bytes_read] = '\0';
 		storage = ft_append (storage, accum);
-		if (!storage)
-			return (NULL);
+		ft_check_null(storage);
 	}
 	free (accum);
 	return (storage);
@@ -57,8 +55,7 @@ char	*ft_cut_out(char *accum)
 	while (accum[i] != '\0' && accum[i] != '\n')
 		i++;
 	store_the_line = ft_calloc(i + 2, sizeof(char));
-	if (!store_the_line)
-		return (NULL);
+	ft_check_null(store_the_line);
 	i = 0;
 	while (accum[i] != '\n' && accum[i] != '\0')
 	{
@@ -86,8 +83,7 @@ char	*free_line(char *accum)
 		return (NULL);
 	}
 	str = ft_calloc((ft_strlen(accum) - i + 1), sizeof(char));
-	if (!str)
-		return (NULL);
+	ft_check_null(str);
 	while (accum[++i])
 		str[j++] = accum[i];
 	str[j] = '\0';

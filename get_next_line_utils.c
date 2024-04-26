@@ -12,6 +12,14 @@
 
 #include "get_next_line.h"
 
+char	*ft_check_null(char *str)
+{
+	if (!str)
+		return (NULL);
+	else
+		return (str);
+}
+
 int	ft_strlen(const char *str)
 {
 	int	i;
